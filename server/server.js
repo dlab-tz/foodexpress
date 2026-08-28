@@ -1,12 +1,37 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const Restaurant = require("./models/Restaurant");
 require("dotenv").config();
 
 const app = express();
 const PORT = 3000;
 
 app.use(cors());
+app.use(express.json());
+
+app.get("/restaurants", async (req, res) => {
+  try {
+    const restaurants = await Restaurant.find();
+    res.json(restaurants);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/restaurants/:id", async (req, res) => {
+  try {
+    const restaurant = await Restaurant.findById(req.params.id);
+
+    if (!restaurant) {
+      return res.status(404).json({ error: "Restaurant not found" });
+    }
+
+    res.json(restaurant);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 app.get("/", (req, res) => {
   res.send("Hello from my Express server!");
@@ -49,6 +74,17 @@ app.get("/api/foods", (req, res) => {
     },
   ];     
   res.json(foods);
+});
+
+app.post("/restaurants", async (req, res) => {
+  try {
+    const restaurant = new Restaurant(req.body);
+    const savedRestaurant = await restaurant.save();
+
+    res.status(201).json(savedRestaurant);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 mongoose
