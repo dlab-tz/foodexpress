@@ -1,11 +1,13 @@
 const express = require('express');
 const supabase = require('./supabase');
 require('dotenv').config();
+const cors = require('cors');
 
 const app = express();
 
 // Middleware to parse incoming JSON request bodies
 app.use(express.json());
+app.use(cors());
 
 const PORT = process.env.PORT || 5000;
 
