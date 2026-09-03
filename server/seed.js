@@ -1,8 +1,10 @@
 require("dotenv").config();
-const mongoose = require("mongoose");
+const { createClient } = require("@supabase/supabase-js");
 
-const Restaurant = require("./models/Restaurant");
-const MenuItem = require("./models/MenuItem");
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_KEY
+);
 
 const restaurants = [
   {
@@ -92,37 +94,64 @@ const menuItems = [
 
 async function seedDatabase() {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    // Clear existing data
+    const { error: menuDeleteError } = await supabase
+      .from("menu_items")
+      .delete()
+      .neq("id", 0);
 
-    console.log("MongoDB connected!");
+    if (menuDeleteError) {
+      throw menuDeleteError;
+    }
 
-    await Restaurant.deleteMany({});
-    await MenuItem.deleteMany({});
+    const { error: restaurantDeleteError } = await supabase
+      .from("restaurants")
+      .delete()
+      .neq("id", 0);
 
-    const savedRestaurants = await Restaurant.insertMany(restaurants);
+    if (restaurantDeleteError) {
+      throw restaurantDeleteError;
+    }
 
+    // Insert restaurants
+    const { data: savedRestaurants, error: restaurantError } =
+      await supabase
+        .from("restaurants")
+        .insert(restaurants)
+        .select();
+
+    if (restaurantError) {
+      throw restaurantError;
+    }
+
+    console.log(`Restaurants seeded: ${savedRestaurants.length}`);
+
+    // Create menu items for every restaurant
     const allMenuItems = [];
 
     for (const restaurant of savedRestaurants) {
       for (const item of menuItems) {
         allMenuItems.push({
           ...item,
-          restaurant_id: restaurant._id,
+          restaurant_id: restaurant.id,
         });
       }
     }
 
-    await MenuItem.insertMany(allMenuItems);
+    // Insert menu items
+    const { data: savedMenuItems, error: menuError } = await supabase
+      .from("menu_items")
+      .insert(allMenuItems)
+      .select();
 
-    console.log(`Restaurants seeded: ${savedRestaurants.length}`);
-    console.log(`Menu items seeded: ${allMenuItems.length}`);
+    if (menuError) {
+      throw menuError;
+    }
 
-    await mongoose.disconnect();
-
+    console.log(`Menu items seeded: ${savedMenuItems.length}`);
     console.log("Database seeding completed successfully!");
   } catch (error) {
     console.error("Database seeding failed:", error.message);
-    await mongoose.disconnect();
   }
 }
 

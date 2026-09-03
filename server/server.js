@@ -1,8 +1,12 @@
 const express = require("express");
 const cors = require("cors");
-const mongoose = require("mongoose");
-const Restaurant = require("./models/Restaurant");
+const { createClient } = require("@supabase/supabase-js");
 require("dotenv").config();
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_KEY
+);
 
 const app = express();
 const PORT = 3000;
@@ -12,8 +16,15 @@ app.use(express.json());
 
 app.get("/restaurants", async (req, res) => {
   try {
-    const restaurants = await Restaurant.find();
-    res.json(restaurants);
+    const { data, error } = await supabase
+      .from("restaurants")
+      .select("*");
+
+    if (error) {
+      throw error;
+    }
+
+    res.json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -21,13 +32,21 @@ app.get("/restaurants", async (req, res) => {
 
 app.get("/restaurants/:id", async (req, res) => {
   try {
-    const restaurant = await Restaurant.findById(req.params.id);
+    const { data, error } = await supabase
+      .from("restaurants")
+      .select("*")
+      .eq("id", req.params.id)
+      .single();
 
-    if (!restaurant) {
-      return res.status(404).json({ error: "Restaurant not found" });
+    if (error) {
+      if (error.code === "PGRST116") {
+        return res.status(404).json({ error: "Restaurant not found" });
+      }
+
+      throw error;
     }
 
-    res.json(restaurant);
+    res.json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -78,23 +97,31 @@ app.get("/api/foods", (req, res) => {
 
 app.post("/restaurants", async (req, res) => {
   try {
-    const restaurant = new Restaurant(req.body);
-    const savedRestaurant = await restaurant.save();
+    const { name, description, image_url, cuisine_type, rating } = req.body;
 
-    res.status(201).json(savedRestaurant);
+    const { data, error } = await supabase
+      .from("restaurants")
+      .insert([
+        {
+          name,
+          description,
+          image_url,
+          cuisine_type,
+          rating,
+        },
+      ])
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    res.status(201).json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
-
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("MongoDB connected successfully!");
-  })
-  .catch((error) => {
-    console.error("MongoDB connection failed:", error.message);
-  });
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
