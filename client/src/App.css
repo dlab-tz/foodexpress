@@ -1,0 +1,45 @@
+.App {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.App h1 {
+  margin-bottom: 2rem;
+}
+
+.restaurant-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.restaurant-card {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 16px;
+  background: #fff;
+  text-align: left;
+}
+
+.restaurant-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.restaurant-card h3 {
+  margin: 12px 0 8px;
+}
+
+.restaurant-card p {
+  margin: 6px 0;
+}
+
+@media (max-width: 768px) {
+  .restaurant-grid {
+    grid-template-columns: 1fr;
+  }
+}
