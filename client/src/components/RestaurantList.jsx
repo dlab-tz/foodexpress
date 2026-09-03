@@ -1,4 +1,5 @@
 ﻿import { useState, useEffect } from "react";
+import RestaurantCard from "./RestaurantCard";
 
 function RestaurantList() {
   const [restaurants, setRestaurants] = useState([]);
@@ -11,6 +12,7 @@ function RestaurantList() {
         if (!res.ok) {
           throw new Error("Failed to fetch restaurants");
         }
+
         return res.json();
       })
       .then((data) => {
@@ -39,15 +41,10 @@ function RestaurantList() {
   return (
     <div className="restaurant-grid">
       {restaurants.map((restaurant) => (
-        <div className="restaurant-card" key={restaurant.id}>
-          {restaurant.image_url && (
-            <img src={restaurant.image_url} alt={restaurant.name} />
-          )}
-          <h3>{restaurant.name}</h3>
-          <p>{restaurant.description}</p>
-          {restaurant.cuisine_type && <p>Cuisine: {restaurant.cuisine_type}</p>}
-          {restaurant.rating && <p>Rating: {restaurant.rating}</p>}
-        </div>
+        <RestaurantCard
+          key={restaurant.id}
+          restaurant={restaurant}
+        />
       ))}
     </div>
   );
