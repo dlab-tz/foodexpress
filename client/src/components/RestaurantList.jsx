@@ -7,12 +7,11 @@ function RestaurantList() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:5000/restaurants")
+    fetch(`${import.meta.env.VITE_API_URL}/restaurants`)
       .then((res) => {
         if (!res.ok) {
           throw new Error("Failed to fetch restaurants");
         }
-
         return res.json();
       })
       .then((data) => {
