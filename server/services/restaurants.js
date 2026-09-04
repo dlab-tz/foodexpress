@@ -4,7 +4,7 @@ const supabase = require('../supabase');
 
 router.get('/', async (req, res) => {
   try {
-    const { data, error } = await supabase.from('Restaurants').select('*');
+    const { data, error } = await supabase.from('restaurants').select('*');
     if (error) return res.status(400).json({ error: error.message });
     res.json(data);
   } catch (err) {
@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { data, error } = await supabase.from('Restaurants').select('*').eq('id', id).single();
+    const { data, error } = await supabase.from('restaurants').select('*').eq('id', id).single();
     if (error) return res.status(404).json({ error: 'Restaurant not found' });
     res.json(data);
   } catch (err) {
@@ -28,7 +28,7 @@ router.get('/:id', async (req, res) => {
 router.get('/:id/menu', async (req, res) => {
   try {
     const { id } = req.params;
-    const { data, error } = await supabase.from('MenuItems').select('*').eq('restaurant_id', id);
+    const { data, error } = await supabase.from('menu_items').select('*').eq('restaurant_id', id);
     if (error) return res.status(400).json({ error: error.message });
     res.json(data);
   } catch (err) {
