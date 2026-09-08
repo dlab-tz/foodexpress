@@ -1,16 +1,24 @@
-﻿import RestaurantList from "./components/RestaurantList";
-import MenuItemList from "./components/MenuItemList";
+﻿import { useState } from "react";
+import RestaurantList from "./components/RestaurantList";
+import RestaurantDetail from "./components/RestaurantDetail";
 import "./App.css";
 
 function App() {
+  const [selectedRestaurantId, setSelectedRestaurantId] = useState(null);
+
   return (
     <div className="App">
       <h1>FoodExpress</h1>
 
-      <RestaurantList />
+      <RestaurantList
+        onSelectRestaurant={setSelectedRestaurantId}
+      />
 
-      <h2>Munchy Restaurant Menu</h2>
-      <MenuItemList restaurantId={2} />
+      {selectedRestaurantId && (
+        <RestaurantDetail
+          restaurantId={selectedRestaurantId}
+        />
+      )}
     </div>
   );
 }

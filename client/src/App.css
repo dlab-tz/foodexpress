@@ -79,3 +79,34 @@
     grid-template-columns: 1fr;
   }
 }
+.restaurant-detail {
+  margin-top: 40px;
+  padding: 24px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fff;
+  text-align: left;
+}
+
+.restaurant-detail-image {
+  display: block;
+  width: 100%;
+  max-width: 500px;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin: 0 auto 20px;
+}
+
+.restaurant-detail h2 {
+  margin: 0 0 12px;
+  text-align: center;
+}
+
+.restaurant-detail h3 {
+  margin-top: 30px;
+}
+
+.restaurant-detail p {
+  margin: 8px 0;
+}

@@ -1,7 +1,7 @@
 ﻿import { useState, useEffect } from "react";
 import RestaurantCard from "./RestaurantCard";
 
-function RestaurantList() {
+function RestaurantList({ onSelectRestaurant }) {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -42,9 +42,10 @@ function RestaurantList() {
     <div className="restaurant-grid">
       {restaurants.map((restaurant) => (
         <RestaurantCard
-          key={restaurant.id}
-          restaurant={restaurant}
-        />
+        key={restaurant.id}
+        restaurant={restaurant}
+        onSelect={onSelectRestaurant}
+      />
       ))}
     </div>
   );
