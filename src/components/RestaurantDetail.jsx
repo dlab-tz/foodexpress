@@ -1,0 +1,79 @@
+import { useEffect, useState } from "react";
+import MenuItemList from "./MenuItemList";
+
+function RestaurantDetail({ restaurantId, onBack }) {
+  const [restaurant, setRestaurant] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    setLoading(true);
+    setError("");
+
+    fetch(`http://localhost:5000/restaurants/${restaurantId}`)
+      .then((response) => {
+        if (response.status === 404) {
+          throw new Error("Restaurant not found");
+        }
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch restaurant");
+        }
+
+        return response.json();
+      })
+      .then((data) => {
+        setRestaurant(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setError(error.message);
+        setLoading(false);
+      });
+  }, [restaurantId]);
+
+  if (loading) {
+    return <p>Loading restaurant...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
+
+  if (!restaurant) {
+    return <p>Restaurant not found.</p>;
+  }
+
+  return (
+    <div className="restaurant-detail">
+      <button onClick={onBack}>← Back to restaurants</button>
+
+      {restaurant.image_url && (
+        <img
+          src={restaurant.image_url}
+          alt={restaurant.name}
+          className="restaurant-detail-image"
+        />
+      )}
+
+      <h2>{restaurant.name}</h2>
+
+      <p>{restaurant.description}</p>
+
+      {restaurant.cuisine_type && (
+        <p>Cuisine: {restaurant.cuisine_type}</p>
+      )}
+
+      {restaurant.rating && (
+        <p>Rating: {restaurant.rating}</p>
+      )}
+
+      <h3>Menu</h3>
+
+      <MenuItemList restaurantId={restaurant.id} />
+    </div>
+  );
+}
+
+export default RestaurantDetail;

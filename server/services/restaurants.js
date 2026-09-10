@@ -5,7 +5,7 @@ const supabase = require("../supabase");
 router.get("/", async (req, res) => {
   try {
     const { data, error } = await supabase
-      .from("restaurants")
+      .from("Restaurants")
       .select("*");
 
     if (error) {
@@ -22,7 +22,7 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const { data, error } = await supabase
-      .from("restaurants")
+      .from("Restaurants")
       .select("*")
       .eq("id", req.params.id)
       .single();
@@ -45,7 +45,7 @@ router.get("/:id", async (req, res) => {
 router.get("/:id/menu", async (req, res) => {
   try {
     const { data, error } = await supabase
-      .from("menu_items")
+      .from("MenuItems")
       .select("*")
       .eq("restaurant_id", req.params.id);
 
@@ -65,7 +65,7 @@ router.post("/", async (req, res) => {
     const { name, description, image_url, cuisine_type, rating } = req.body;
 
     const { data, error } = await supabase
-      .from("restaurants")
+      .from("Restaurants")
       .insert([
         {
           name,

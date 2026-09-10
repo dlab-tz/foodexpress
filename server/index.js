@@ -9,8 +9,10 @@ app.use(cors());
 app.use(express.json());
 
 const restaurantsRouter = require("./services/restaurants");
+const ordersRouter = require("./services/Orders");
 
 app.use("/restaurants", restaurantsRouter);
+app.use("/orders", ordersRouter);
 
 app.get("/", (req, res) => {
   res.send("FoodExpress server is running!");
