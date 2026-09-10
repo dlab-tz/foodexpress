@@ -1,5 +1,4 @@
 ﻿import { useState, useEffect } from "react";
-import RestaurantCard from "./RestaurantCard";
 
 function RestaurantList({ onSelectRestaurant }) {
   const [restaurants, setRestaurants] = useState([]);
@@ -41,11 +40,27 @@ function RestaurantList({ onSelectRestaurant }) {
   return (
     <div className="restaurant-grid">
       {restaurants.map((restaurant) => (
-        <RestaurantCard
-        key={restaurant.id}
-        restaurant={restaurant}
-        onSelect={onSelectRestaurant}
-      />
+        <div
+          key={restaurant.id}
+          className="restaurant-card"
+          onClick={() => onSelectRestaurant(restaurant.id)}
+        >
+          {restaurant.image_url && (
+            <img src={restaurant.image_url} alt={restaurant.name} />
+          )}
+
+          <h3>{restaurant.name}</h3>
+
+          <p>{restaurant.description}</p>
+
+          {restaurant.cuisine_type && (
+            <p>Cuisine: {restaurant.cuisine_type}</p>
+          )}
+
+          {restaurant.rating && (
+            <p>Rating: {restaurant.rating}</p>
+          )}
+        </div>
       ))}
     </div>
   );
