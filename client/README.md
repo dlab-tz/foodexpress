@@ -9,7 +9,13 @@ npm install
 cp .env.example .env
 ```
 
-Fill in `.env` with your Supabase project's URL and anon key if the client talks to Supabase directly (Project Settings → API in the Supabase dashboard). All client env vars must be prefixed `VITE_` to be exposed to the app.
+| Variable                | Description                                                        |
+| ----------------------- | ------------------------------------------------------------------- |
+| `VITE_API_URL`           | Base URL of the [server](../server) API (default `http://localhost:5000`) |
+| `VITE_SUPABASE_URL`      | Your Supabase project URL — only needed if the client queries Supabase directly |
+| `VITE_SUPABASE_ANON_KEY` | Your Supabase project's anon/public key — same as above |
+
+All client env vars must be prefixed `VITE_` to be exposed to the app. Use `VITE_API_URL` instead of hardcoding `http://localhost:5000` in fetch calls — e.g. `` fetch(`${import.meta.env.VITE_API_URL}/restaurants`) `` — so it keeps working once the API is deployed somewhere other than localhost.
 
 ## Running
 
