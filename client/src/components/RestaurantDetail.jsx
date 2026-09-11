@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import MenuItemList from "./MenuItemList";
 
-function RestaurantDetail({ restaurantId }) {
+function RestaurantDetail({ restaurantId, onBack }) {
   const [restaurant, setRestaurant] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -47,6 +47,8 @@ function RestaurantDetail({ restaurantId }) {
 
   return (
     <div className="restaurant-detail">
+      <button onClick={onBack}>← Back to restaurants</button>
+
       {restaurant.image_url && (
         <img
           src={restaurant.image_url}
