@@ -1,27 +1,29 @@
-export default function MenuItemCard({ item }) {
-  if (!item) return null;
+import { useCart } from "../context/CartContext";
+
+function MenuItemCard({ item }) {
+  const { addToCart } = useCart();
+
+  const handleAddToCart = () => {
+    addToCart(item);
+  };
 
   return (
-    <div 
-      style={{
-        border: '1px solid #eee',
-        borderRadius: '6px',
-        padding: '12px',
-        margin: '8px 0',
-        backgroundColor: '#1a1a1a',
-        color: '#ffffff'
-      }}
-    >
+    <div className="menu-item-card">
       {item.image_url && (
-        <img 
-          src={item.image_url} 
-          alt={item.name || 'Menu item'} 
-          style={{ width: '80px', height: '80px', objectFit: 'cover', float: 'right' }} 
-        />
+        <img src={item.image_url} alt={item.name} />
       )}
-      <h4>{item.name || 'Unnamed Item'}</h4>
-      <p>{item.description || 'No description available.'}</p>
-      <strong>TZS {item.price ?? 'N/A'}</strong>
+
+      <h3>{item.name}</h3>
+
+      <p>{item.description}</p>
+
+      <p>Price: {item.price}</p>
+
+      <button onClick={handleAddToCart}>
+        Add to Cart
+      </button>
     </div>
   );
 }
+
+export default MenuItemCard;

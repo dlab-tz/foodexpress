@@ -1,17 +1,18 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import RestaurantCard from "./RestaurantCard";
 
-function RestaurantList() {
+function RestaurantList({ onSelectRestaurant }) {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/restaurants`)
+    fetch("http://localhost:5000/restaurants")
       .then((res) => {
         if (!res.ok) {
           throw new Error("Failed to fetch restaurants");
         }
+
         return res.json();
       })
       .then((data) => {
@@ -43,6 +44,7 @@ function RestaurantList() {
         <RestaurantCard
           key={restaurant.id}
           restaurant={restaurant}
+          onSelect={onSelectRestaurant}
         />
       ))}
     </div>

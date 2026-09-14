@@ -1,39 +1,91 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const supabase = require('../supabase');
+const supabase = require("../supabase");
 
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const { data, error } = await supabase.from('restaurants').select('*');
-    if (error) return res.status(400).json({ error: error.message });
+    const { data, error } = await supabase
+      .from("Restaurants")
+      .select("*");
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
     res.json(data);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
   }
 });
 
-router.get('/:id', async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
-    const { data, error } = await supabase.from('restaurants').select('*').eq('id', id).single();
-    if (error) return res.status(404).json({ error: 'Restaurant not found' });
+    const { data, error } = await supabase
+      .from("Restaurants")
+      .select("*")
+      .eq("id", req.params.id)
+      .single();
+
+    if (error) {
+      if (error.code === "PGRST116") {
+        return res.status(404).json({ error: "Restaurant not found" });
+      }
+
+      return res.status(500).json({ error: error.message });
+    }
+
     res.json(data);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
   }
 });
 
-router.get('/:id/menu', async (req, res) => {
+router.get("/:id/menu", async (req, res) => {
   try {
-    const { id } = req.params;
-    const { data, error } = await supabase.from('menu_items').select('*').eq('restaurant_id', id);
-    if (error) return res.status(400).json({ error: error.message });
+    const { data, error } = await supabase
+      .from("MenuItems")
+      .select("*")
+      .eq("restaurant_id", req.params.id);
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
     res.json(data);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+router.post("/", async (req, res) => {
+  try {
+    const { name, description, image_url, cuisine_type, rating } = req.body;
+
+    const { data, error } = await supabase
+      .from("Restaurants")
+      .insert([
+        {
+          name,
+          description,
+          image_url,
+          cuisine_type,
+          rating,
+        },
+      ])
+      .select()
+      .single();
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
+    res.status(201).json(data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
   }
 });
 

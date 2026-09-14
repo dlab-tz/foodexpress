@@ -1,6 +1,9 @@
-function RestaurantCard({ restaurant }) {
+function RestaurantCard({ restaurant, onSelect }) {
   return (
-    <div className="restaurant-card">
+    <div
+      className="restaurant-card"
+      onClick={() => onSelect(restaurant.id)}
+    >
       {restaurant.image_url && (
         <img src={restaurant.image_url} alt={restaurant.name} />
       )}
