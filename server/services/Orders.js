@@ -120,3 +120,51 @@ router.post("/", async (req, res) => {
 });
 
 module.exports = router;
+
+// Get a single order with its items
+router.get("/:id", async (req, res) => {
+  try {
+    const orderId = req.params.id;
+
+    // Get the order
+    const { data: order, error: orderError } = await supabase
+      .from("orders")
+      .select("*")
+      .eq("id", orderId)
+      .single();
+
+    if (orderError) {
+      if (orderError.code === "PGRST116") {
+        return res.status(404).json({
+          error: "Order not found",
+        });
+      }
+
+      return res.status(500).json({
+        error: orderError.message,
+      });
+    }
+
+    // Get the items belonging to this order
+    const { data: orderItems, error: itemsError } = await supabase
+      .from("order_items")
+      .select("*")
+      .eq("order_id", orderId);
+
+    if (itemsError) {
+      return res.status(500).json({
+        error: itemsError.message,
+      });
+    }
+
+    res.json({
+      order,
+      order_items: orderItems,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Server error",
+    });
+  }
+});
